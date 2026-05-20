@@ -2167,6 +2167,16 @@ function collectFormData() {
     gloveOrdering:  isPlayer && document.getElementById('gloveOrdering') ? document.getElementById('gloveOrdering').value : '',
     bagModel:       isPlayer && document.getElementById('bagModel')      ? document.getElementById('bagModel').value      : '',
     bagOrdering:    isPlayer && document.getElementById('bagOrdering')   ? document.getElementById('bagOrdering').value   : '',
+    // Alt jersey / socks / shell — needed for 2012 Red to write correctly to Google Sheet
+    sockOrdering:       isPlayer ? 'yes' : 'skip',
+    hasAltJersey:       isPlayer ? (cfg.hasAltJersey || false) : false,
+    altJerseyOrdering:  isPlayer && cfg.hasAltJersey ? 'yes' : 'no',
+    altSockOrdering:    isPlayer && cfg.hasAltJersey ? 'yes' : 'no',
+    altShellOrdering:   isPlayer && cfg.hasAltShell && pantsChoice === 'shell' ? 'yes' : 'no',
+    // LW Pants (2018 Pirates White)
+    lwpantOrdering: isPlayer && document.getElementById('lwpantOrdering') ? document.getElementById('lwpantOrdering').value : '',
+    lwpantModel:    isPlayer && document.getElementById('lwpantModel')    ? document.getElementById('lwpantModel').value    : '',
+    lwpantSize:     isPlayer && document.getElementById('lwpantSize')     ? document.getElementById('lwpantSize').value     : '',
     // Gear selections — enrich with size from DOM select elements
     gearSelections: (() => {
       const result = {};
