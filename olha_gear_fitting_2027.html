@@ -625,7 +625,7 @@
           <div class="field-row">
             <div class="field">
               <label for="gloveModel">Glove model <span class="req">*</span></label>
-              <select id="gloveModel" name="gloveModel" onchange="recalcTotal()">
+              <select id="gloveModel" name="gloveModel" onchange="onGloveModelChange()">
                 <option value="">Select model</option>
                 <option value="glov-sr">Vapor Pro Glove — Senior (13"–15") — $145</option>
                 <option value="glov-int">Vapor Pro Glove — Intermediate (12"–12.5") — $140</option>
@@ -637,8 +637,6 @@
               <label for="gloveSize">Glove size</label>
               <select id="gloveSize" name="gloveSize">
                 <option value="">Select size</option>
-                <option>10"</option><option>10.5"</option><option>11"</option><option>12"</option><option>12.5"</option>
-                <option>13"</option><option>14"</option><option>15"</option>
               </select>
             </div>
           </div>
@@ -1399,6 +1397,20 @@ function onGloveOrderingChange() {
   const reuse  = document.getElementById('glove-reuse-confirm');
   detail.style.display = val === 'yes' ? '' : 'none';
   reuse.style.display  = val === 'no'  ? '' : 'none';
+  recalcTotal();
+}
+
+function onGloveModelChange() {
+  const model = document.getElementById('gloveModel').value;
+  const sizeSel = document.getElementById('gloveSize');
+  const sizeMap = {
+    'glov-sr':  ['13"', '14"', '15"'],
+    'glov-int': ['12"', '12.5"'],
+    'glov-jr':  ['10"', '11"'],
+  };
+  const sizes = sizeMap[model] || [];
+  sizeSel.innerHTML = '<option value="">Select size</option>' +
+    sizes.map(s => '<option>' + s + '</option>').join('');
   recalcTotal();
 }
 
