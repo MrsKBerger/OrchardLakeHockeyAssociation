@@ -51,7 +51,7 @@
   .progress-step { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; transition: background 0.3s; }
   .progress-step.active { background: var(--red); }
   .progress-step.done { background: rgba(255,255,255,0.5); }
-  .step-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .step-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: who600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
   .step-label span { color: var(--white); }
 
   /* CARDS */
@@ -297,7 +297,7 @@
         ℹ️ <div><strong>One form per person.</strong> Player orders, parent orders, and coach/manager orders must each be submitted separately.</div>
       </div>
       <div class="field mt-12">
-        <label>Who is placing this order? <span class="req">*</span></label>
+        <label>Are you ordering for a player, coach or parent? <span class="req">*</span></label>
         <div class="radio-group mt-12" id="role-group">
           <label class="radio-option" onclick="selectRadio('role','player',this);onRoleChange()">
             <input type="radio" name="role" value="player"> ⛸ Player
