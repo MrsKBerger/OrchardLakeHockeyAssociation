@@ -2167,9 +2167,25 @@ function collectFormData() {
     gloveOrdering:  isPlayer && document.getElementById('gloveOrdering') ? document.getElementById('gloveOrdering').value : '',
     bagModel:       isPlayer && document.getElementById('bagModel')      ? document.getElementById('bagModel').value      : '',
     bagOrdering:    isPlayer && document.getElementById('bagOrdering')   ? document.getElementById('bagOrdering').value   : '',
-    gearSelections, teamLookSelections, staffApparelSelections,
+    gearSelections,
+    staffApparelSelections,
     orderLines: lines,
     total,
+
+    // Team Look — built here so Apps Script gets cut (model key) + size per item
+    teamLookSelections: (() => {
+      const result = {};
+      ['mjacket','hjacket','ljacket','jogger'].forEach(key => {
+        const el = document.getElementById('tl-' + key);
+        if (!el || !el.classList.contains('checked')) return;
+        const cutSel = el.querySelector('select[name="tl_size_' + key + '"]');
+        const sizeSel = el.querySelector('select[name="tl_letter_' + key + '"]');
+        const cut  = cutSel  ? cutSel.value  : '';
+        const size = sizeSel ? sizeSel.value : '';
+        if (cut) result[cut] = { selected: true, size: size };
+      });
+      return result;
+    })(),
   };
   return data;
 }
