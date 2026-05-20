@@ -2167,8 +2167,32 @@ function collectFormData() {
     gloveOrdering:  isPlayer && document.getElementById('gloveOrdering') ? document.getElementById('gloveOrdering').value : '',
     bagModel:       isPlayer && document.getElementById('bagModel')      ? document.getElementById('bagModel').value      : '',
     bagOrdering:    isPlayer && document.getElementById('bagOrdering')   ? document.getElementById('bagOrdering').value   : '',
-    gearSelections,
-    staffApparelSelections,
+    // Gear selections — enrich with size from DOM select elements
+    gearSelections: (() => {
+      const result = {};
+      Object.keys(gearSelections).forEach(key => {
+        const el = document.getElementById('gi-' + key);
+        const sizeSel = el ? el.querySelector('select[name="' + key + '_size"]') : null;
+        result[key] = { price: gearSelections[key], size: sizeSel ? sizeSel.value : '' };
+      });
+      return result;
+    })(),
+    // Staff/parent apparel — enrich with size and qty from DOM
+    staffApparelSelections: (() => {
+      const result = {};
+      Object.keys(staffApparelSelections).forEach(paKey => {
+        const cleanKey = paKey.replace(/^pa_/, '');
+        const el = document.getElementById('sa-' + cleanKey);
+        const sizeSel = el ? el.querySelector('select[name="sa_size_' + cleanKey + '"]') : null;
+        const qtySel  = el ? el.querySelector('select[name="sa_qty_'  + cleanKey + '"]') : null;
+        result[paKey] = {
+          price: staffApparelSelections[paKey],
+          size: sizeSel ? sizeSel.value : '',
+          qty:  qtySel  ? parseInt(qtySel.value) || 1 : 1,
+        };
+      });
+      return result;
+    })(),
     orderLines: lines,
     total,
 
