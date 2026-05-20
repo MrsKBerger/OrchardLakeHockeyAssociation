@@ -276,7 +276,7 @@
           <optgroup label="Pirates Teams">
             <option value="2018PiratesRed">2018 Pirates Red · Wed May 20 · 6:30–7:30 PM</option>
             <option value="2018PiratesWhite">2018 Pirates White · Thu May 21 · 5:30–6:30 PM ⭐ New Team</option>
-            <option value="2019PiratesRed">2019 Pirates Red · Thu May 21 · 6:30–7:30 PM</option>
+            <option value="2019PiratesRed">2019 Pirates Red · Thu May 21 · 6:30–7:30 PM ⭐ New Team</option>
           </optgroup>
         </select>
         <div class="error-msg" id="team-err">Please select a team.</div>
@@ -396,9 +396,9 @@
           ✅ <div>Pirates players may <strong>reuse their existing jersey</strong> from 2025-26. Only order new if you need a replacement.</div>
         </div>
 
-        <!-- 2012 Red & 2019 Pirates Red: alternate jersey notice -->
+        <!-- 2012 Red only: alternate jersey notice -->
         <div id="alt-jersey-banner" class="alert-banner info" style="display:none;">
-          🔴 <div id="alt-jersey-banner-text"><strong>Three-Jersey Season:</strong> All players must order the <strong>Home &amp; Away set ($90)</strong> plus an <strong>Alternate jersey ($45)</strong>. Please enter your name and number below — all jerseys use the same details. Alternate socks set is $20.</div>
+          🔴 <div><strong>2012 Red — Three-Jersey Season:</strong> All players must order the <strong>Home &amp; Away set ($90)</strong> plus an <strong>Alternate jersey ($45)</strong>. Please enter your name and number below — all jerseys use the same details. Alternate socks set is $20.</div>
         </div>
 
         <div id="jersey-fields">
@@ -1057,8 +1057,8 @@ const TEAM_CONFIG = {
     fitting: 'Thu May 21 · 6:30–7:30 PM',
     helmetColor: 'Black',
     isPirates: true,
+    isNewTeam: true,
     piratesJerseyReuse: true,
-    hasAltJersey: true,   // Home + Away + Alternate jersey set
     gloveTier: 'Vapor Pro',
     glovesOptional: false,
     midweightJacketRequired: true,
@@ -1757,15 +1757,7 @@ function initStep2() {
     jerseyOrdering.closest('.field').style.display = 'none'; // Hide the question — it's always new
     document.getElementById('jersey-detail-fields').style.display = '';
     const altBanner = document.getElementById('alt-jersey-banner');
-    const altBannerText = document.getElementById('alt-jersey-banner-text');
-    if (altBanner) {
-      if (cfg.isPirates) {
-        altBannerText.innerHTML = `<strong>2019 Pirates Red — Three-Jersey Season:</strong> All players must order the <strong>Home &amp; Away set ($90)</strong> plus an <strong>Alternate jersey ($45)</strong>. Please enter your name and number below — all jerseys use the same details. Alternate socks set is $20.`;
-      } else {
-        altBannerText.innerHTML = `<strong>2012 Red — Three-Jersey Season:</strong> All players must order the <strong>Home &amp; Away set ($90)</strong> plus an <strong>Alternate jersey ($45)</strong>. Please enter your name and number below — all jerseys use the same details. Alternate socks set is $20.`;
-      }
-      altBanner.style.display = 'flex';
-    }
+    if (altBanner) altBanner.style.display = 'flex';
   } else if (cfg.isPirates && !cfg.isNewTeam) {
     if (jerseyCardSubtitle) jerseyCardSubtitle.innerHTML = 'Home &amp; Away set — $90';
     jerseyReuse.style.display = 'flex';
