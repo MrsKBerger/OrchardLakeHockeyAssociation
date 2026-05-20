@@ -51,7 +51,7 @@
   .progress-step { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; transition: background 0.3s; }
   .progress-step.active { background: var(--red); }
   .progress-step.done { background: rgba(255,255,255,0.5); }
-  .step-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: who600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .step-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
   .step-label span { color: var(--white); }
 
   /* CARDS */
@@ -297,7 +297,7 @@
         ℹ️ <div><strong>One form per person.</strong> Player orders, parent orders, and coach/manager orders must each be submitted separately.</div>
       </div>
       <div class="field mt-12">
-        <label>Are you ordering for a player, coach or parent? <span class="req">*</span></label>
+        <label>Who is placing this order? <span class="req">*</span></label>
         <div class="radio-group mt-12" id="role-group">
           <label class="radio-option" onclick="selectRadio('role','player',this);onRoleChange()">
             <input type="radio" name="role" value="player"> ⛸ Player
@@ -1663,7 +1663,7 @@ function buildStaffApparel() {
     { key:'perfzip-grey', label:'Team Perf 1/4 Zip — Grey', price:50, note:'Logo on left chest · S–XXL' },
     { key:'puffervest', label:'Team Puffer Vest — Black', price:115, note:'Logo on left chest · XS–2XL' },
     { key:'sailcoat', label:'Sail Racing Travel Coat', price:160, note:'Logo on left chest · XS–2XL' },
-    { key:'s-midjacket', label:'Midweight Jacket — Senior', price:80, note:'Logo on left chest · XS–XXXL' },
+    { key:'s-midjacket', label:'Midweight Jacket — Senior', price:85, note:'Logo on left chest · XS–XXXL' },
     { key:'s-heavyjacket', label:'Heavyweight Jacket — Senior', price:135, note:'Logo on left chest · XS–XXXL' },
     { key:'s-lightjacket', label:'Lightweight Jacket — Senior', price:70, note:'Logo on left chest · XS–3XL' },
     { key:'s-lwpant', label:'Team Lightweight Pant', price:60, note:'Logo on left leg · XS–XXL' },
@@ -2176,6 +2176,7 @@ function collectFormData() {
     speedPantModel: isPlayer && document.getElementById('speedPantModel')? document.getElementById('speedPantModel').value: '',
     speedPantSize:  isPlayer && document.getElementById('speedPantSize') ? document.getElementById('speedPantSize').value : '',
     gloveModel:     isPlayer && document.getElementById('gloveModel')    ? document.getElementById('gloveModel').value    : '',
+    gloveSize:      isPlayer && document.getElementById('gloveSize')     ? document.getElementById('gloveSize').value     : '',
     gloveOrdering:  isPlayer && document.getElementById('gloveOrdering') ? document.getElementById('gloveOrdering').value : '',
     bagModel:       isPlayer && document.getElementById('bagModel')      ? document.getElementById('bagModel').value      : '',
     bagOrdering:    isPlayer && document.getElementById('bagOrdering')   ? document.getElementById('bagOrdering').value   : '',
@@ -2203,10 +2204,9 @@ function collectFormData() {
     staffApparelSelections: (() => {
       const result = {};
       Object.keys(staffApparelSelections).forEach(paKey => {
-        const cleanKey = paKey.replace(/^pa_/, '');
-        const el = document.getElementById('sa-' + cleanKey);
-        const sizeSel = el ? el.querySelector('select[name="sa_size_' + cleanKey + '"]') : null;
-        const qtySel  = el ? el.querySelector('select[name="sa_qty_'  + cleanKey + '"]') : null;
+        const el = document.getElementById('sa-' + paKey);
+        const sizeSel = el ? el.querySelector('select[name="sa_size_' + paKey + '"]') : null;
+        const qtySel  = el ? el.querySelector('select[name="sa_qty_'  + paKey + '"]') : null;
         result[paKey] = {
           price: staffApparelSelections[paKey],
           size: sizeSel ? sizeSel.value : '',
