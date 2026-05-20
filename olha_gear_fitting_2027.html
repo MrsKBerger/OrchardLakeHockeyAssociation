@@ -2196,13 +2196,16 @@ function collectFormData() {
     orderLines: lines,
     total,
 
-    // Team Look — built here so Apps Script gets cut (model key) + size per item
+    // Team Look — read directly from DOM for accuracy
     teamLookSelections: (() => {
       const result = {};
       ['mjacket','hjacket','ljacket','jogger'].forEach(key => {
         const el = document.getElementById('tl-' + key);
-        if (!el || !el.classList.contains('checked')) return;
-        const cutSel = el.querySelector('select[name="tl_size_' + key + '"]');
+        if (!el) return;
+        // Item must be expanded (checked) AND ordering = yes
+        const orderSel = el.querySelector('select[name="tl_order_' + key + '"]');
+        if (!orderSel || orderSel.value !== 'yes') return;
+        const cutSel  = el.querySelector('select[name="tl_size_'   + key + '"]');
         const sizeSel = el.querySelector('select[name="tl_letter_' + key + '"]');
         const cut  = cutSel  ? cutSel.value  : '';
         const size = sizeSel ? sizeSel.value : '';
@@ -2211,6 +2214,9 @@ function collectFormData() {
       return result;
     })(),
   };
+  console.log('[OLHA] Payload teamLookSelections:', JSON.stringify(data.teamLookSelections));
+  console.log('[OLHA] Payload gearSelections:', JSON.stringify(data.gearSelections));
+  console.log('[OLHA] Payload total:', data.total);
   return data;
 }
 
