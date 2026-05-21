@@ -526,7 +526,7 @@
             <div class="field-row">
               <div class="field">
                 <label for="speedPantModel">Speed pant model <span class="req">*</span></label>
-                <select id="speedPantModel" name="speedPantModel" onchange="recalcTotal()">
+                <select id="speedPantModel" name="speedPantModel" onchange="onSpeedPantModelChange()">
                   <option value="">Select model</option>
                   <option value="sp-sr">Bauer Speed Pant 2.0 — Senior — $135</option>
                   <option value="sp-jr">Bauer Speed Pant 2.0 — Junior — $120</option>
@@ -1235,13 +1235,7 @@ function toggleStaff(key, price) {
     delete staffApparelSelections[key];
   } else {
     el.classList.add('checked');
-    const sizeSel = el.querySelector('select[name="sa_size_' + key + '"]');
-    const qtySel  = el.querySelector('select[name="sa_qty_'  + key + '"]');
-    staffApparelSelections[key] = {
-      price: price,
-      size:  sizeSel ? sizeSel.value : '',
-      qty:   qtySel  ? parseInt(qtySel.value) || 1 : 1,
-    };
+    staffApparelSelections[key] = price; // store price only; size/qty read live at submit
   }
   recalcTotal();
 }
@@ -1403,6 +1397,23 @@ function onGloveOrderingChange() {
   const reuse  = document.getElementById('glove-reuse-confirm');
   detail.style.display = val === 'yes' ? '' : 'none';
   reuse.style.display  = val === 'no'  ? '' : 'none';
+  recalcTotal();
+}
+
+function onSpeedPantModelChange() {
+  const model = document.getElementById('speedPantModel').value;
+  const sizeSel = document.getElementById('speedPantSize');
+  const sizeMap = {
+    'sp-sr':    ['XS','S','M','L','XL','XXL'],
+    'sp-jr':    ['XS','S','M','L','XL'],
+    'sp-youth': ['XS','S','M','L','XL'],
+    'gsp-sr':   ['XS','S','M','L','XL','XXL'],
+    'gsp-int':  ['XS','S','M','L','XL'],
+    'gsp-jr':   ['XS','S','M','L','XL'],
+  };
+  const sizes = sizeMap[model] || ['XS','S','M','L','XL','XXL'];
+  sizeSel.innerHTML = '<option value="">Select size</option>' +
+    sizes.map(s => '<option>' + s + '</option>').join('');
   recalcTotal();
 }
 
@@ -2213,10 +2224,14 @@ function collectFormData() {
         const el = document.getElementById('sa-' + paKey);
         const sizeSel = el ? el.querySelector('select[name="sa_size_' + paKey + '"]') : null;
         const qtySel  = el ? el.querySelector('select[name="sa_qty_'  + paKey + '"]') : null;
+        const size = sizeSel ? sizeSel.value : '';
+        const qty  = qtySel  ? parseInt(qtySel.value) || 1 : 1;
         result[paKey] = {
-          price: staffApparelSelections[paKey],
-          size: sizeSel ? sizeSel.value : '',
-          qty:  qtySel  ? parseInt(qtySel.value) || 1 : 1,
+          price: typeof staffApparelSelections[paKey] === 'object'
+                   ? staffApparelSelections[paKey].price
+                   : staffApparelSelections[paKey],
+          size: size,
+          qty:  qty,
         };
       });
       return result;
