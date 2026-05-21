@@ -1235,7 +1235,13 @@ function toggleStaff(key, price) {
     delete staffApparelSelections[key];
   } else {
     el.classList.add('checked');
-    staffApparelSelections[key] = price;
+    const sizeSel = el.querySelector('select[name="sa_size_' + key + '"]');
+    const qtySel  = el.querySelector('select[name="sa_qty_'  + key + '"]');
+    staffApparelSelections[key] = {
+      price: price,
+      size:  sizeSel ? sizeSel.value : '',
+      qty:   qtySel  ? parseInt(qtySel.value) || 1 : 1,
+    };
   }
   recalcTotal();
 }
