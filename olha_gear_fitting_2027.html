@@ -1680,15 +1680,12 @@ function buildStaffApparel() {
     { key:'perfzip-grey', label:'Team Perf 1/4 Zip — Grey', price:50, note:'Logo on left chest · S–XXL' },
     { key:'puffervest', label:'Team Puffer Vest — Black', price:115, note:'Logo on left chest · XS–2XL' },
     { key:'sailcoat', label:'Sail Racing Travel Coat', price:160, note:'Logo on left chest · XS–2XL' },
-    { key:'s-midjacket', label:'Midweight Jacket — Senior', price:85, note:'Logo on left chest · XS–XXXL' },
+    { key:'s-midjacket', label:'Midweight Jacket — Senior', price:80, note:'Logo on left chest · XS–XXXL' },
     { key:'s-heavyjacket', label:'Heavyweight Jacket — Senior', price:135, note:'Logo on left chest · XS–XXXL' },
     { key:'s-lightjacket', label:'Lightweight Jacket — Senior', price:70, note:'Logo on left chest · XS–3XL' },
     { key:'s-lwpant', label:'Team Lightweight Pant', price:60, note:'Logo on left leg · XS–XXL' },
     { key:'s-jogger', label:'Woven Jogger — Senior', price:65, note:'Logo on left leg · XS–2XL' },
     { key:'s-duffle', label:'Pro Duffle', price:70, note:'Vinyl printed logo' },
-    { key:'s-polo', label:'Polo', price:32, note:'See sizing' },
-    { key:'s-perfshirt', label:'Performance Shirt', price:20, note:'See sizing' },
-    { key:'s-shorts', label:'Shorts', price:25, note:'See sizing' },
   ];
   items.forEach(item => {
     const div = document.createElement('div');
@@ -2221,9 +2218,16 @@ function collectFormData() {
     staffApparelSelections: (() => {
       const result = {};
       Object.keys(staffApparelSelections).forEach(paKey => {
-        const el = document.getElementById('sa-' + paKey);
-        const sizeSel = el ? el.querySelector('select[name="sa_size_' + paKey + '"]') : null;
-        const qtySel  = el ? el.querySelector('select[name="sa_qty_'  + paKey + '"]') : null;
+        // pa_polo  → element id "pa-polo",  selects "pa_size_polo"
+        // s-polo   → element id "sa-s-polo", selects "sa_size_s-polo"
+        const isPlayerItem = paKey.startsWith('pa_');
+        const cleanKey = isPlayerItem ? paKey.replace(/^pa_/, '') : paKey;
+        const elId     = isPlayerItem ? ('pa-' + cleanKey) : ('sa-' + paKey);
+        const sizeAttr = isPlayerItem ? ('pa_size_' + cleanKey) : ('sa_size_' + paKey);
+        const qtyAttr  = isPlayerItem ? ('pa_qty_'  + cleanKey) : ('sa_qty_'  + paKey);
+        const el = document.getElementById(elId);
+        const sizeSel = el ? el.querySelector('select[name="' + sizeAttr + '"]') : null;
+        const qtySel  = el ? el.querySelector('select[name="' + qtyAttr  + '"]') : null;
         const size = sizeSel ? sizeSel.value : '';
         const qty  = qtySel  ? parseInt(qtySel.value) || 1 : 1;
         result[paKey] = {
