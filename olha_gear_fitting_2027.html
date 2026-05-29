@@ -276,7 +276,7 @@
           <optgroup label="Pirates Teams">
             <option value="2018PiratesRed">2018 Pirates Red · Wed May 20 · 6:30–7:30 PM</option>
             <option value="2018PiratesWhite">2018 Pirates White · Thu May 21 · 5:30–6:30 PM ⭐ New Team</option>
-            <option value="2019PiratesRed">2019 Pirates Red · Thu May 21 · 6:30–7:30 PM ⭐ New Team</option>
+            <option value="2019PiratesRed">2019 Pirates Red · Thu May 21 · 6:30–7:30 PM</option>
           </optgroup>
         </select>
         <div class="error-msg" id="team-err">Please select a team.</div>
@@ -297,7 +297,7 @@
         ℹ️ <div><strong>One form per person.</strong> Player orders, parent orders, and coach/manager orders must each be submitted separately.</div>
       </div>
       <div class="field mt-12">
-        <label>Are you ordering for a Player, Coach or Parent? <span class="req">*</span></label>
+        <label>Who is placing this order? <span class="req">*</span></label>
         <div class="radio-group mt-12" id="role-group">
           <label class="radio-option" onclick="selectRadio('role','player',this);onRoleChange()">
             <input type="radio" name="role" value="player"> ⛸ Player
@@ -507,14 +507,26 @@
 
           <!-- Shell options -->
           <div id="shell-section">
+            <div class="alert-banner info" style="margin-bottom:10px;">
+              📏 <div>Use your <strong>Bauer Hockey Pants size as a guide</strong> — shells are ordered in the same size as your pants.</div>
+            </div>
             <div class="field-row">
               <div class="field">
+                <label for="shellModel">Shell model <span class="req">*</span></label>
+                <select id="shellModel" name="shellModel" onchange="onShellModelChange();recalcTotal()">
+                  <option value="">Select model</option>
+                  <option value="shell-sr">Pant Shell SR ($45)</option>
+                  <option value="shell-jr">Pant Shell JR ($45)</option>
+                  <option value="shell-yth">Pant Shell YTH ($45)</option>
+                  <option value="shell-goal-sr">Goal Pant Shell SR ($45)</option>
+                  <option value="shell-goal-int">Goal Pant Shell INT ($45)</option>
+                </select>
+                <div class="error-msg" id="shellModel-err">Required.</div>
+              </div>
+              <div class="field" id="shellSizeField" style="display:none;">
                 <label for="shellSize">Shell size <span class="req">*</span></label>
                 <select id="shellSize" name="shellSize" onchange="recalcTotal()">
                   <option value="">Select size</option>
-                  <option>YXS</option><option>YS</option><option>YM</option><option>YL</option><option>YXL</option>
-                  <option>JRXS</option><option>JRS</option><option>JRM</option><option>JRL</option><option>JRXL</option>
-                  <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
                 </select>
                 <div class="error-msg" id="shellSize-err">Required.</div>
               </div>
@@ -526,7 +538,7 @@
             <div class="field-row">
               <div class="field">
                 <label for="speedPantModel">Speed pant model <span class="req">*</span></label>
-                <select id="speedPantModel" name="speedPantModel" onchange="onSpeedPantModelChange()">
+                <select id="speedPantModel" name="speedPantModel" onchange="recalcTotal()">
                   <option value="">Select model</option>
                   <option value="sp-sr">Bauer Speed Pant 2.0 — Senior — $135</option>
                   <option value="sp-jr">Bauer Speed Pant 2.0 — Junior — $120</option>
@@ -625,7 +637,7 @@
           <div class="field-row">
             <div class="field">
               <label for="gloveModel">Glove model <span class="req">*</span></label>
-              <select id="gloveModel" name="gloveModel" onchange="onGloveModelChange()">
+              <select id="gloveModel" name="gloveModel" onchange="recalcTotal()">
                 <option value="">Select model</option>
                 <option value="glov-sr">Vapor Pro Glove — Senior (13"–15") — $145</option>
                 <option value="glov-int">Vapor Pro Glove — Intermediate (12"–12.5") — $140</option>
@@ -637,6 +649,8 @@
               <label for="gloveSize">Glove size</label>
               <select id="gloveSize" name="gloveSize">
                 <option value="">Select size</option>
+                <option>10"</option><option>10.5"</option><option>11"</option><option>12"</option><option>12.5"</option>
+                <option>13"</option><option>14"</option><option>15"</option>
               </select>
             </div>
           </div>
@@ -1055,7 +1069,6 @@ const TEAM_CONFIG = {
     fitting: 'Thu May 21 · 6:30–7:30 PM',
     helmetColor: 'Black',
     isPirates: true,
-    isNewTeam: true,
     piratesJerseyReuse: true,
     gloveTier: 'Vapor Pro',
     glovesOptional: false,
@@ -1235,7 +1248,7 @@ function toggleStaff(key, price) {
     delete staffApparelSelections[key];
   } else {
     el.classList.add('checked');
-    staffApparelSelections[key] = price; // store price only; size/qty read live at submit
+    staffApparelSelections[key] = price;
   }
   recalcTotal();
 }
@@ -1361,7 +1374,27 @@ function buildTeamLookSection() {
   }
 }
 
-function toggleTeamLookItem(key, headerEl) {
+function onShellModelChange() {
+  const model = document.getElementById('shellModel') ? document.getElementById('shellModel').value : '';
+  const sizeSel = document.getElementById('shellSize');
+  const sizeField = document.getElementById('shellSizeField');
+  if (!model || !sizeSel) return;
+
+  const SHELL_SIZES = {
+    'shell-sr':       ['S','M','L','XL','XXL','XXXL'],
+    'shell-jr':       ['S','M','L','XL'],
+    'shell-yth':      ['S','M','L'],
+    'shell-goal-sr':  ['S','M','L','XL','XXL'],
+    'shell-goal-int': ['S','M','L'],
+  };
+
+  const sizes = SHELL_SIZES[model] || [];
+  sizeSel.innerHTML = '<option value="">Select size</option>' +
+    sizes.map(s => '<option>' + s + '</option>').join('');
+  sizeField.style.display = sizes.length ? '' : 'none';
+}
+
+
   const item = headerEl.closest('.gear-item');
   const isChecked = item.classList.contains('checked');
   if (isChecked) {
@@ -1397,37 +1430,6 @@ function onGloveOrderingChange() {
   const reuse  = document.getElementById('glove-reuse-confirm');
   detail.style.display = val === 'yes' ? '' : 'none';
   reuse.style.display  = val === 'no'  ? '' : 'none';
-  recalcTotal();
-}
-
-function onSpeedPantModelChange() {
-  const model = document.getElementById('speedPantModel').value;
-  const sizeSel = document.getElementById('speedPantSize');
-  const sizeMap = {
-    'sp-sr':    ['XS','S','M','L','XL','XXL'],
-    'sp-jr':    ['XS','S','M','L','XL'],
-    'sp-youth': ['XS','S','M','L','XL'],
-    'gsp-sr':   ['XS','S','M','L','XL','XXL'],
-    'gsp-int':  ['XS','S','M','L','XL'],
-    'gsp-jr':   ['XS','S','M','L','XL'],
-  };
-  const sizes = sizeMap[model] || ['XS','S','M','L','XL','XXL'];
-  sizeSel.innerHTML = '<option value="">Select size</option>' +
-    sizes.map(s => '<option>' + s + '</option>').join('');
-  recalcTotal();
-}
-
-function onGloveModelChange() {
-  const model = document.getElementById('gloveModel').value;
-  const sizeSel = document.getElementById('gloveSize');
-  const sizeMap = {
-    'glov-sr':  ['13"', '14"', '15"'],
-    'glov-int': ['12"', '12.5"'],
-    'glov-jr':  ['10"', '11"'],
-  };
-  const sizes = sizeMap[model] || [];
-  sizeSel.innerHTML = '<option value="">Select size</option>' +
-    sizes.map(s => '<option>' + s + '</option>').join('');
   recalcTotal();
 }
 
@@ -1686,6 +1688,9 @@ function buildStaffApparel() {
     { key:'s-lwpant', label:'Team Lightweight Pant', price:60, note:'Logo on left leg · XS–XXL' },
     { key:'s-jogger', label:'Woven Jogger — Senior', price:65, note:'Logo on left leg · XS–2XL' },
     { key:'s-duffle', label:'Pro Duffle', price:70, note:'Vinyl printed logo' },
+    { key:'s-polo', label:'Polo', price:32, note:'See sizing' },
+    { key:'s-perfshirt', label:'Performance Shirt', price:20, note:'See sizing' },
+    { key:'s-shorts', label:'Shorts', price:25, note:'See sizing' },
   ];
   items.forEach(item => {
     const div = document.createElement('div');
@@ -1917,12 +1922,13 @@ function recalcTotal() {
     // Pants
     if (!cfg || !cfg.isPirates) {
       if (pantsChoice === 'shell') {
+        const shModel = document.getElementById('shellModel') ? document.getElementById('shellModel').value : '';
+        const shPrice = 45; // All Bauer shells = $45
         if (cfg && cfg.hasAltShell) {
-          // 2012 Red: Standard shell + Alternate shell
-          add('Shell — Standard ($45)', PRICES.shell, 'new');
-          add('Shell — Alternate ($45)', PRICES.shell, 'new');
+          add('Shell — Standard ($45)', shPrice, 'new');
+          add('Shell — Alternate ($45)', shPrice, 'new');
         } else {
-          add('Shell', PRICES.shell, 'new');
+          add('Shell', shPrice, 'new');
         }
       } else if (pantsChoice === 'speedpant') {
         const spModel = document.getElementById('speedPantModel') ? document.getElementById('speedPantModel').value : '';
@@ -2186,84 +2192,18 @@ function collectFormData() {
     jerseyOrdering: isPlayer && document.getElementById('jerseyOrdering')? document.getElementById('jerseyOrdering').value: '',
     sockSize:       isPlayer && document.getElementById('sockSize')      ? document.getElementById('sockSize').value      : '',
     pantsChoice:    isPlayer ? pantsChoice : '',
-    shellSize:      isPlayer && document.getElementById('shellSize')     ? document.getElementById('shellSize').value     : '',
+    shellModel:     isPlayer && document.getElementById('shellModel')     ? document.getElementById('shellModel').value     : '',
+    shellSize:      isPlayer && document.getElementById('shellSize')      ? document.getElementById('shellSize').value      : '',
     speedPantModel: isPlayer && document.getElementById('speedPantModel')? document.getElementById('speedPantModel').value: '',
     speedPantSize:  isPlayer && document.getElementById('speedPantSize') ? document.getElementById('speedPantSize').value : '',
     gloveModel:     isPlayer && document.getElementById('gloveModel')    ? document.getElementById('gloveModel').value    : '',
-    gloveSize:      isPlayer && document.getElementById('gloveSize')     ? document.getElementById('gloveSize').value     : '',
     gloveOrdering:  isPlayer && document.getElementById('gloveOrdering') ? document.getElementById('gloveOrdering').value : '',
     bagModel:       isPlayer && document.getElementById('bagModel')      ? document.getElementById('bagModel').value      : '',
     bagOrdering:    isPlayer && document.getElementById('bagOrdering')   ? document.getElementById('bagOrdering').value   : '',
-    // Alt jersey / socks / shell — needed for 2012 Red to write correctly to Google Sheet
-    sockOrdering:       isPlayer ? 'yes' : 'skip',
-    hasAltJersey:       isPlayer ? (cfg.hasAltJersey || false) : false,
-    altJerseyOrdering:  isPlayer && cfg.hasAltJersey ? 'yes' : 'no',
-    altSockOrdering:    isPlayer && cfg.hasAltJersey ? 'yes' : 'no',
-    altShellOrdering:   isPlayer && cfg.hasAltShell && pantsChoice === 'shell' ? 'yes' : 'no',
-    // LW Pants (2018 Pirates White)
-    lwpantOrdering: isPlayer && document.getElementById('lwpantOrdering') ? document.getElementById('lwpantOrdering').value : '',
-    lwpantModel:    isPlayer && document.getElementById('lwpantModel')    ? document.getElementById('lwpantModel').value    : '',
-    lwpantSize:     isPlayer && document.getElementById('lwpantSize')     ? document.getElementById('lwpantSize').value     : '',
-    // Gear selections — enrich with size from DOM select elements
-    gearSelections: (() => {
-      const result = {};
-      Object.keys(gearSelections).forEach(key => {
-        const el = document.getElementById('gi-' + key);
-        const sizeSel = el ? el.querySelector('select[name="' + key + '_size"]') : null;
-        result[key] = { price: gearSelections[key], size: sizeSel ? sizeSel.value : '' };
-      });
-      return result;
-    })(),
-    // Staff/parent apparel — enrich with size and qty from DOM
-    staffApparelSelections: (() => {
-      const result = {};
-      Object.keys(staffApparelSelections).forEach(paKey => {
-        // pa_polo  → element id "pa-polo",  selects "pa_size_polo"
-        // s-polo   → element id "sa-s-polo", selects "sa_size_s-polo"
-        const isPlayerItem = paKey.startsWith('pa_');
-        const cleanKey = isPlayerItem ? paKey.replace(/^pa_/, '') : paKey;
-        const elId     = isPlayerItem ? ('pa-' + cleanKey) : ('sa-' + paKey);
-        const sizeAttr = isPlayerItem ? ('pa_size_' + cleanKey) : ('sa_size_' + paKey);
-        const qtyAttr  = isPlayerItem ? ('pa_qty_'  + cleanKey) : ('sa_qty_'  + paKey);
-        const el = document.getElementById(elId);
-        const sizeSel = el ? el.querySelector('select[name="' + sizeAttr + '"]') : null;
-        const qtySel  = el ? el.querySelector('select[name="' + qtyAttr  + '"]') : null;
-        const size = sizeSel ? sizeSel.value : '';
-        const qty  = qtySel  ? parseInt(qtySel.value) || 1 : 1;
-        result[paKey] = {
-          price: typeof staffApparelSelections[paKey] === 'object'
-                   ? staffApparelSelections[paKey].price
-                   : staffApparelSelections[paKey],
-          size: size,
-          qty:  qty,
-        };
-      });
-      return result;
-    })(),
+    gearSelections, teamLookSelections, staffApparelSelections,
     orderLines: lines,
     total,
-
-    // Team Look — read directly from DOM for accuracy
-    teamLookSelections: (() => {
-      const result = {};
-      ['mjacket','hjacket','ljacket','jogger'].forEach(key => {
-        const el = document.getElementById('tl-' + key);
-        if (!el) return;
-        // Item must be expanded (checked) AND ordering = yes
-        const orderSel = el.querySelector('select[name="tl_order_' + key + '"]');
-        if (!orderSel || orderSel.value !== 'yes') return;
-        const cutSel  = el.querySelector('select[name="tl_size_'   + key + '"]');
-        const sizeSel = el.querySelector('select[name="tl_letter_' + key + '"]');
-        const cut  = cutSel  ? cutSel.value  : '';
-        const size = sizeSel ? sizeSel.value : '';
-        if (cut) result[cut] = { selected: true, size: size };
-      });
-      return result;
-    })(),
   };
-  console.log('[OLHA] Payload teamLookSelections:', JSON.stringify(data.teamLookSelections));
-  console.log('[OLHA] Payload gearSelections:', JSON.stringify(data.gearSelections));
-  console.log('[OLHA] Payload total:', data.total);
   return data;
 }
 
@@ -2306,7 +2246,7 @@ async function submitForm() {
 // ─── GOOGLE SHEETS WEBHOOK ───────────────────────────────────────
 //  Paste your deployed Apps Script Web App URL below.
 //  Extensions → Apps Script → Deploy → New Deployment → Web App
-const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxnSStP1yx60Haipg_Owp_bqHntd07_8naNGCJg_j0BS_hKEC9X6-uX3K65JWbi08Y/exec';
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxUWuNHXBrmEKLVwky5Eqxib5zvmb8GQLnCkbh7c8Gyq-2KKtNdrSMxISTLCWK38MOM/exec';
 
 async function submitToWebhook(orderData) {
   if (!WEBHOOK_URL) {
