@@ -276,7 +276,7 @@
           <optgroup label="Pirates Teams">
             <option value="2018PiratesRed">2018 Pirates Red · Wed May 20 · 6:30–7:30 PM</option>
             <option value="2018PiratesWhite">2018 Pirates White · Thu May 21 · 5:30–6:30 PM ⭐ New Team</option>
-            <option value="2019PiratesRed">2019 Pirates Red · Thu May 21 · 6:30–7:30 PM</option>
+            <option value="2019PiratesRed">2019 Pirates Red · Thu May 21 · 6:30–7:30 PM ⭐ New Team</option>
           </optgroup>
         </select>
         <div class="error-msg" id="team-err">Please select a team.</div>
@@ -1069,6 +1069,7 @@ const TEAM_CONFIG = {
     fitting: 'Thu May 21 · 6:30–7:30 PM',
     helmetColor: 'Black',
     isPirates: true,
+    isNewTeam: true,
     piratesJerseyReuse: true,
     gloveTier: 'Vapor Pro',
     glovesOptional: false,
@@ -1379,7 +1380,6 @@ function onShellModelChange() {
   const sizeSel = document.getElementById('shellSize');
   const sizeField = document.getElementById('shellSizeField');
   if (!model || !sizeSel) return;
-
   const SHELL_SIZES = {
     'shell-sr':       ['S','M','L','XL','XXL','XXXL'],
     'shell-jr':       ['S','M','L','XL'],
@@ -1387,7 +1387,6 @@ function onShellModelChange() {
     'shell-goal-sr':  ['S','M','L','XL','XXL'],
     'shell-goal-int': ['S','M','L'],
   };
-
   const sizes = SHELL_SIZES[model] || [];
   sizeSel.innerHTML = '<option value="">Select size</option>' +
     sizes.map(s => '<option>' + s + '</option>').join('');
@@ -1922,13 +1921,11 @@ function recalcTotal() {
     // Pants
     if (!cfg || !cfg.isPirates) {
       if (pantsChoice === 'shell') {
-        const shModel = document.getElementById('shellModel') ? document.getElementById('shellModel').value : '';
-        const shPrice = 45; // All Bauer shells = $45
         if (cfg && cfg.hasAltShell) {
-          add('Shell — Standard ($45)', shPrice, 'new');
-          add('Shell — Alternate ($45)', shPrice, 'new');
+          add('Shell — Standard ($45)', 45, 'new');
+          add('Shell — Alternate ($45)', 45, 'new');
         } else {
-          add('Shell', shPrice, 'new');
+          add('Shell', 45, 'new');
         }
       } else if (pantsChoice === 'speedpant') {
         const spModel = document.getElementById('speedPantModel') ? document.getElementById('speedPantModel').value : '';
@@ -2246,7 +2243,7 @@ async function submitForm() {
 // ─── GOOGLE SHEETS WEBHOOK ───────────────────────────────────────
 //  Paste your deployed Apps Script Web App URL below.
 //  Extensions → Apps Script → Deploy → New Deployment → Web App
-const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxUWuNHXBrmEKLVwky5Eqxib5zvmb8GQLnCkbh7c8Gyq-2KKtNdrSMxISTLCWK38MOM/exec';
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxnSStP1yx60Haipg_Owp_bqHntd07_8naNGCJg_j0BS_hKEC9X6-uX3K65JWbi08Y/exec';
 
 async function submitToWebhook(orderData) {
   if (!WEBHOOK_URL) {
